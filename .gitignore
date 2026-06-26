@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+data/train.csv
+data/train_split.csv
+data/val.csv
+data/test.csv
+data/gender_submission.csv
+data/predictions.csv
+
+models/*.pt
+models/*.joblib
+models/*.json
+models/val_predictions.csv
