@@ -82,6 +82,8 @@ The app has two tabs:
 - **Training Results** — loss/accuracy curves over training; validation metrics (accuracy, precision, recall, F1, ROC-AUC) with a confusion matrix and ROC curve from the single held-out 80/20 split; and a **cross-validated estimate** (mean ± std over 5 folds) that's far less noisy than any single split.
 - **Run Inference** — enter the path to any Titanic-format CSV (defaults to `data/val.csv`). The app loads the trained model + preprocessor from `models/`, runs predictions, and displays/downloads them. If the CSV includes a `Survived` column, it also reports evaluation metrics and plots for that data.
 
+![Training Results tab](docs/images/training_results.png)
+
 ## Architecture and design choices
 
 **Preprocessing (`src/preprocessing.py`)** — fit once on the training split and reused identically for validation and inference, so there is no train/inference skew:
