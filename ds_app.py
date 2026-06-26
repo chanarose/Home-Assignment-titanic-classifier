@@ -193,6 +193,11 @@ with tab_inference:
     )
     default_path = os.path.join(DATA_DIR, "val.csv")
     csv_path = st.text_input("Path to dataset CSV", value=default_path)
+    labels_path = st.text_input(
+        "Optional: path to a separate labels CSV with PassengerId + Survived "
+        "(for datasets like Kaggle's test.csv that don't include the answer)",
+        value="",
+    )
 
     if st.button("Run inference"):
         if not os.path.exists(csv_path):
@@ -215,8 +220,34 @@ with tab_inference:
                     mime="text/csv",
                 )
 
+                y_true = None
                 if "Survived" in df.columns:
                     y_true = df["Survived"].astype(int).values
+                elif labels_path.strip():
+                    if not os.path.exists(labels_path):
+                        st.warning(f"Labels file not found: {labels_path} — showing predictions only.")
+                    elif "PassengerId" not in df.columns:
+                        st.warning(
+                            "Dataset has no PassengerId column to join labels on — "
+                            "showing predictions only."
+                        )
+                    else:
+                        labels_df = pd.read_csv(labels_path)
+                        joined = df[["PassengerId"]].merge(labels_df, on="PassengerId", how="left")
+                        if joined["Survived"].isna().any():
+                            st.warning(
+                                "Some rows had no matching label in the labels CSV — "
+                                "showing predictions only."
+                            )
+                        else:
+                            y_true = joined["Survived"].astype(int).values
+                            st.caption(
+                                f"Evaluating against labels joined from `{labels_path}` "
+                                "on PassengerId — not part of the training pipeline, "
+                                "shown for inspection only."
+                            )
+
+                if y_true is not None:
                     metrics = {
                         "accuracy": accuracy_score(y_true, preds),
                         "precision": precision_score(y_true, preds, zero_division=0),
