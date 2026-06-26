@@ -195,7 +195,7 @@ with tab_inference:
     csv_path = st.text_input("Path to dataset CSV", value=default_path)
     labels_path = st.text_input(
         "Optional: path to a separate labels CSV with PassengerId + Survived "
-        "(for datasets like Kaggle's test.csv that don't include the answer)",
+        "(for unlabeled datasets where the answer lives in a different file)",
         value="",
     )
 
